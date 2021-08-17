@@ -44,7 +44,7 @@ Successfully added box 'centos/7' (v1902.01) for 'virtualbox'!
 ```
 ### 2. 作業ディレクトリ作成 && 移動
 ```
- mkdir vagrant_virtual_env && cd _$
+ mkdir vagrant_virtual_env && cd $_
  ```
 ### 3. Vagrant初期設定
 ```
@@ -60,6 +60,10 @@ config.vm.network "forwarded_port", guest: 80, host: 8080
 
 #変更②
 config.vm.network "private_network", ip: "192.168.33.19"
+
+変更①では、`config.vm.network` に **forwarded_port**を設定する(guest: 80, host: 8080)ことで、ゲストOSのポート番号へのアクセスをホストOSのポート番号へ転送できるようになる。
+変更②では、プライベートネットワークのipアドレスを設定している。指定したipアドレスにアクセスすると、仮想マシンへ通信できるようになる。
+
 ```
 * 下記コードを編集
 ```
@@ -68,6 +72,9 @@ config.vm.synced_folder "../data", "/vagrant_data"
 # ↓ 以下に編集
 config.vm.synced_folder "./", "/vagrant", type:"virtualbox"
 ```
+
+変更点③では、`config.vm.synced_folder`の設定を行うことにより、ゲストOS、ホストOS間での同期が可能になる。今回の設定ではリアルタイムでの同期を設定。
+
 ### 4. vagrant up 準備
 * ポート開放
 既にポートが使用されている場合は先にポートを開放する。
@@ -119,7 +126,7 @@ vagrant up
 	5. `vagrant reload --provision`
 	---
 上記対応後再び`vagrant up`を行うことでゲストOSが起動する。
-#### 6. ゲストOSへログイン
+### 6. ゲストOSへログイン
 ```shell
 $ vagrant ssh
 ```
@@ -177,7 +184,7 @@ cd /vagrant
 ```
 vagrant reload
 ```
-を実行し、同期させる。
+を実行し、vagrantを再起動する。
 再度`vagrant ssh`でゲストOS、`vagrant`ディレクトリで確認する。
 
 ---
@@ -361,6 +368,12 @@ vagrant reload
 	sudo chmod -R 777 storage
 	```
 	`chmod -R　７７７ storage` で、指定したディレクトリ以下のディレクトリ・ファイル全てを権限付与に一括変更できる。
+	今回実行した権限777は、
+	
+	```
+	所有者(u)のアクセス権　rwx : グループユーザー(g)のアクセス権 rwx : その他のユーザー(o)のアクセス権 rwx
+	```
+	の読み(r)、書き(w)、実行(x)全てを許可にしている。
 	[http://192.168.33.19](http://192.168.33.19/)を開いてLravelのwelcomeが表示されれば完了。
 
 
